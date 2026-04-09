@@ -871,19 +871,34 @@ export class SkillContext<Meta extends ContextMetaBase> {
   }
 
   /** 清除角色身上的元素附着 */
-  cleanAura(target: CharacterTargetArg) {
+  cleanAura(what: Aura | "all", target: CharacterTargetArg) {
+    if (what === Aura.None) {
+      throw new GiTcgDataError(`Invalid: cleaning Aura.None`);
+    }
     const characters = this.queryCoerceToCharacters(target);
     for (const ch of characters) {
+      let newAura = ch.aura;
+      if (what === "all" || ch.aura === what) {
+        newAura = Aura.None;
+      } else if (ch.aura === Aura.CryoDendro) {
+        if (what === Aura.Cryo) {
+          newAura = Aura.Dendro;
+        } else if (what === Aura.Dendro) {
+          newAura = Aura.Cryo;
+        }
+      }
       using l = this.mutator.subLog(
         DetailLogType.Primitive,
-        `Clean aura of ${stringifyState(ch)}`,
+        `Clean aura [aura:${what}] from ${stringifyState(
+          ch,
+        )}, gets [aura:${newAura}]`,
       );
       this.mutate({
         type: "modifyEntityVar",
         direction: "decrease",
         state: ch.latest(),
         varName: "aura",
-        value: Aura.None,
+        value: newAura,
       });
     }
     return this.enableShortcut();
