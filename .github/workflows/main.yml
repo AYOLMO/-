@@ -266,7 +266,7 @@ jobs:
       - name: Build C# Binding
         run: dotnet build csbinding -c Release
 
-    Deploy-Standalone:
+  Deploy-Standalone:
     name: 🌐 Deploy Standalone to GitHub Pages
     needs: Build-Core
     runs-on: ubuntu-latest
