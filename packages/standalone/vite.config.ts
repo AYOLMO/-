@@ -19,6 +19,8 @@ import babel from "@rollup/plugin-babel";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 
 export default defineConfig({
+  base: '/QiShenZhaoHuanMoNiQi/',
+  
   esbuild: {
     target: "ES2020",
   },
